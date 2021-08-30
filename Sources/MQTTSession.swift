@@ -198,9 +198,8 @@ final public class MQTTSession: NSObject, StreamDelegate {
         output.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
 
         if options.useTLS {
-          let tls: String = StreamSocketSecurityLevel.tlSv1.rawValue
-            input.setProperty(tls, forKey: .socketSecurityLevelKey)
-            output.setProperty(tls, forKey: .socketSecurityLevelKey)
+            _ = input.setProperty(StreamSocketSecurityLevel.tlSv1.rawValue as AnyObject?, forKey: .socketSecurityLevelKey)
+            _ = output.setProperty(StreamSocketSecurityLevel.tlSv1.rawValue as AnyObject?, forKey: .socketSecurityLevelKey)
         }
 
         DispatchQueue.global(qos: .userInitiated).async {
