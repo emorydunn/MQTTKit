@@ -59,9 +59,9 @@ internal struct MQTTPacket {
         self.header = header
     }
     
-    init(header: MQTTPacket.Header) {
-        self.init(header: header)
-    }
+//    init(header: MQTTPacket.Header) {
+//      self.init(header: header)
+//    }
 }
 
 // MARK: - Publish Packet

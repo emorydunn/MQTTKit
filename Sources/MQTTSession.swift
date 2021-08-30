@@ -134,17 +134,21 @@ final public class MQTTSession: NSObject, StreamDelegate {
         }
         
         DispatchQueue.main.async { 
+          if #available(macOS 10.12, *) {
             self.keepAliveTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(self.options.keepAliveInterval / 2), repeats: true, block: { [weak self] timer in
-                guard self?.outputStream?.streamStatus == .open,
+              guard self?.outputStream?.streamStatus == .open,
                     -self!.lastServerResponse.timeIntervalSinceNow < Double(self!.options.keepAliveInterval) * 1.5  else {
-                        timer.invalidate()
-                        self?.state = .disconnected
-                        self?.autoReconnect()
-                        return
-                }
-                
-                self?.mqttPingreq()
+                timer.invalidate()
+                self?.state = .disconnected
+                self?.autoReconnect()
+                return
+              }
+              
+              self?.mqttPingreq()
             })
+          } else {
+            // Fallback on earlier versions
+          }
         }
     }
 
@@ -156,26 +160,31 @@ final public class MQTTSession: NSObject, StreamDelegate {
         }
         
         DispatchQueue.main.async {
+          if #available(macOS 10.12, *) {
             self.autoReconnectTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(self.options.keepAliveInterval / 2), repeats: true, block: { [lsr = self.lastServerResponse, timeout = self.options.autoReconnectTimeout] timer in
-                guard -lsr.timeIntervalSinceNow < timeout && self.state == .disconnected else {
-                    timer.invalidate()
-                    return
-                }
-                self.connect()
+              guard -lsr.timeIntervalSinceNow < timeout && self.state == .disconnected else {
+                timer.invalidate()
+                return
+              }
+              self.connect()
             })
+          } else {
+            // Fallback on earlier versions
+          }
         }
     }
 
     // MARK: - Socket connection
     private func openStreams(completion: @escaping (((input: InputStream, output: OutputStream)?) -> Void)) {
-        var inputStream: InputStream?
-        var outputStream: OutputStream?
+      guard let host = options.host, let url = URL(string: "\(host):\(options.port)") else { completion(nil); return }
+        let inputStream: InputStream? = InputStream(url: url)
+        let outputStream: OutputStream? = OutputStream(url: url, append: false)
 
-        Stream.getStreamsToHost(
-            withName: options.host,
-            port: options.port,
-            inputStream: &inputStream,
-            outputStream: &outputStream)
+//        Stream.getStreamsToHost(
+//            withName: options.host,
+//            port: options.port,
+//            inputStream: &inputStream,
+//            outputStream: &outputStream)
 
         guard let input = inputStream, let output = outputStream else {
             completion(nil)
@@ -185,8 +194,8 @@ final public class MQTTSession: NSObject, StreamDelegate {
         input.delegate = self
         output.delegate = self
 
-        input.schedule(in: RunLoop.main, forMode: RunLoopMode.defaultRunLoopMode)
-        output.schedule(in: RunLoop.main, forMode: RunLoopMode.defaultRunLoopMode)
+        input.schedule(in: RunLoop.main, forMode: .defaultRunLoopMode)
+        output.schedule(in: RunLoop.main, forMode: .defaultRunLoopMode)
 
         if options.useTLS {
             input.setProperty(StreamSocketSecurityLevel.tlSv1, forKey: .socketSecurityLevelKey)
