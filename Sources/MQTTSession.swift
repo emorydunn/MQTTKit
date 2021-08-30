@@ -194,8 +194,8 @@ final public class MQTTSession: NSObject, StreamDelegate {
         input.delegate = self
         output.delegate = self
 
-        input.schedule(in: RunLoop.main, forMode: .defaultRunLoopMode)
-        output.schedule(in: RunLoop.main, forMode: .defaultRunLoopMode)
+      input.schedule(in: RunLoop.main, forMode: RunLoopMode.defaultRunLoopMode)
+        output.schedule(in: RunLoop.main, forMode: RunLoopMode.defaultRunLoopMode)
 
         if options.useTLS {
             input.setProperty(StreamSocketSecurityLevel.tlSv1, forKey: .socketSecurityLevelKey)
