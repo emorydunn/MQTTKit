@@ -206,7 +206,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
             output.open()
 
             while input.streamStatus == .opening || output.streamStatus == .opening {
-                usleep(1000)
+                usleep(10000)
             }
           print("finished the opening wait:  \(input.streamStatus) \(String(describing: input.streamError)) \(output.streamStatus) \(String(describing: output.streamError)))")
 
