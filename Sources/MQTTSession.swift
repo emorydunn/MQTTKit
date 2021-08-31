@@ -184,11 +184,13 @@ final public class MQTTSession: NSObject, StreamDelegate {
         
 //      #if os(Linux)
       guard let url = URL(string: "tcp://\(host):\(options.port)") else { completion(nil); return }
+      print("Trying url: \(url.absoluteString)")
       Stream.CC_getStreamPair(to: url) { result in
-        guard case .success(let (input, output)) = result else { completion(nil); return }
+        switch result {
+        case .success(let (input, output)):
 //        inputStream = input
 //        outputStream = output
-        
+        print("got to success on getStreamPair")
         input.delegate = self
         output.delegate = self
         input.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
@@ -212,6 +214,10 @@ final public class MQTTSession: NSObject, StreamDelegate {
             }
 
             completion((input, output))
+        }
+        
+        case .failure(let a):
+          print ("GetStreamPair fails:  \(a)")
         }
       }
 //      #else
