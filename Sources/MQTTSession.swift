@@ -201,14 +201,17 @@ final public class MQTTSession: NSObject, StreamDelegate {
         }
         
         DispatchQueue.global(qos: .userInitiated).async {
+            print("Opening streams")
             input.open()
             output.open()
 
             while input.streamStatus == .opening || output.streamStatus == .opening {
                 usleep(1000)
             }
+          print("finished the opening wait:  \(input.streamStatus) \(String(describing: input.streamError)) \(output.streamStatus) \(String(describing: output.streamError)))")
 
             if input.streamStatus != .open || output.streamStatus != .open {
+                print("neither stream is open")
                 completion(nil)
                 return
             }
