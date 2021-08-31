@@ -176,15 +176,15 @@ final public class MQTTSession: NSObject, StreamDelegate {
 
     // MARK: - Socket connection
     private func openStreams(completion: @escaping (((input: InputStream, output: OutputStream)?) -> Void)) {
-      guard let host = options.host, let url = URL(string: "\(host):\(options.port)") else { completion(nil); return }
-        let inputStream: InputStream? = InputStream(url: url)
-        let outputStream: OutputStream? = OutputStream(url: url, append: false)
 
-//        Stream.getStreamsToHost(
-//            withName: options.host,
-//            port: options.port,
-//            inputStream: &inputStream,
-//            outputStream: &outputStream)
+        var inputStream: InputStream?
+        var outputStream: OutputStream?
+
+         Stream.getStreamsToHost(
+            withName: options.host,
+            port: options.port,
+            inputStream: &inputStream,
+            outputStream: &outputStream)
 
         guard let input = inputStream, let output = outputStream else {
             completion(nil)
