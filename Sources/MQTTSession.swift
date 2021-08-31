@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CornucopiaStreams
 
 final public class MQTTSession: NSObject, StreamDelegate {
     private var options: MQTTOptions
@@ -177,36 +178,26 @@ final public class MQTTSession: NSObject, StreamDelegate {
     // MARK: - Socket connection
     private func openStreams(completion: @escaping (((input: InputStream, output: OutputStream)?) -> Void)) {
 
-        var inputStream: InputStream?
-        var outputStream: OutputStream?
-
-         Stream.getStreamsToHost(
-            withName: options.host,
-            port: options.port,
-            inputStream: &inputStream,
-            outputStream: &outputStream)
-
-        guard let input = inputStream, let output = outputStream else {
-            completion(nil)
-            return
-        }
-
+        guard let host = options.host else { completion(nil); return }
+//        var inputStream: InputStream?
+//        var outputStream: OutputStream?
+        
+//      #if os(Linux)
+      guard let url = URL(string: "tcp://\(host):\(options.port)") else { completion(nil); return }
+      Stream.CC_getStreamPair(to: url) { result in
+        guard case .success(let (input, output)) = result else { completion(nil); return }
+//        inputStream = input
+//        outputStream = output
+        
         input.delegate = self
         output.delegate = self
-
-        #if os(Linux)
         input.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
         output.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
-        #else
-        input.schedule(in: RunLoop.main, forMode: RunLoopMode.defaultRunLoopMode)
-        output.schedule(in: RunLoop.main, forMode: RunLoopMode.defaultRunLoopMode)
-        #endif
-
-        if options.useTLS {
+        if self.options.useTLS {
             _ = input.setProperty(StreamSocketSecurityLevel.tlSv1.rawValue as AnyObject?, forKey: .socketSecurityLevelKey)
             _ = output.setProperty(StreamSocketSecurityLevel.tlSv1.rawValue as AnyObject?, forKey: .socketSecurityLevelKey)
         }
-
+        
         DispatchQueue.global(qos: .userInitiated).async {
             input.open()
             output.open()
@@ -222,6 +213,47 @@ final public class MQTTSession: NSObject, StreamDelegate {
 
             completion((input, output))
         }
+      }
+//      #else
+//        Stream.getStreamsToHost(
+//          withName: options.host,
+//          port: options.port,
+//          inputStream: &inputStream,
+//          outputStream: &outputStream)
+//      #endif
+
+
+//        guard let input = inputStream, let output = outputStream else {
+//            completion(nil)
+//            return
+//        }
+//
+//        input.delegate = self
+//        output.delegate = self
+//
+//        input.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
+//        output.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
+//
+//        if options.useTLS {
+//            _ = input.setProperty(StreamSocketSecurityLevel.tlSv1.rawValue as AnyObject?, forKey: .socketSecurityLevelKey)
+//            _ = output.setProperty(StreamSocketSecurityLevel.tlSv1.rawValue as AnyObject?, forKey: .socketSecurityLevelKey)
+//        }
+//
+//        DispatchQueue.global(qos: .userInitiated).async {
+//            input.open()
+//            output.open()
+//
+//            while input.streamStatus == .opening || output.streamStatus == .opening {
+//                usleep(1000)
+//            }
+//
+//            if input.streamStatus != .open || output.streamStatus != .open {
+//                completion(nil)
+//                return
+//            }
+//
+//            completion((input, output))
+//        }
     }
 
     internal func closeStreams() {

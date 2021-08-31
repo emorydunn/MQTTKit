@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "CornucopiaStreams",
+        "repositoryURL": "https://github.com/Cornucopia-Swift/CornucopiaStreams.git",
+        "state": {
+          "branch": null,
+          "revision": "b2b987c8e14cb268d6db9477876d23d67de854f0",
+          "version": "0.9.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
