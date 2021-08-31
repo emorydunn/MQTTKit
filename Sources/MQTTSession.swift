@@ -79,6 +79,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
             strongSelf.inputStream = streams.input
             strongSelf.outputStream = streams.output
 
+            print("About to call for MQTT negotiation")
             strongSelf.mqttConnect()
             strongSelf.startKeepAliveTimer()
 
@@ -535,7 +536,8 @@ final public class MQTTSession: NSObject, StreamDelegate {
         packet.variableHeader += MQTTProtocol.Level
         packet.variableHeader += connFlags
         packet.variableHeader += options.keepAliveInterval
-
+      
+        print("Sending packet on connect: \(packet)")
         send(packet: packet)
     }
 
@@ -636,6 +638,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
 
         guard let output = outputStream else { return }
 
+        print("past the guard for output stream")
         // print(packet.type, packet.identifier ?? "", "->")
 
         let serialized = packet.encoded
@@ -644,6 +647,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
         
         writeQueue.sync {
             while toSend > 0 {
+                print("in the toSend loop: \(toSend)")
                 let count = serialized.withUnsafeBytes {
                     output.write($0.advanced(by: sent), maxLength: toSend)
                 }
