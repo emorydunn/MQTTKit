@@ -69,10 +69,12 @@ final public class MQTTSession: NSObject, StreamDelegate {
     public func connect(completion: ((_ success: Bool) -> Void)? = nil) {
         closeStreams()
         openStreams { [weak self] streams in
+            print("Got to completion")
             guard let strongSelf = self, let streams = streams else {
                 completion?(false)
                 return
             }
+            print("Got past the completion guard")
 
             strongSelf.inputStream = streams.input
             strongSelf.outputStream = streams.output
