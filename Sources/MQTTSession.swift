@@ -209,7 +209,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
             output.open()
 
             while input.streamStatus == .opening || output.streamStatus == .opening {
-                usleep(10000)
+                usleep(1000)
             }
           print("finished the opening wait:  \(input.streamStatus) \(String(describing: input.streamError)) \(output.streamStatus) \(String(describing: output.streamError)))")
 
@@ -280,6 +280,9 @@ final public class MQTTSession: NSObject, StreamDelegate {
     public func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
         switch eventCode {
         case .hasBytesAvailable:
+          if aStream === inputStream {
+            print("input stream hasBytesAvailable")
+          }
             if let input = aStream as? InputStream {
                 readStream(input: input)
             }
@@ -303,7 +306,9 @@ final public class MQTTSession: NSObject, StreamDelegate {
 
         mainReading: while input.streamStatus == .open && input.hasBytesAvailable {
             // Header
+
             let count = input.read(messageBuffer, maxLength: 1)
+            print("In reading inputstream loop:  \(count) read")
             if count == 0 {
                 continue
             } else if count < 0 {
