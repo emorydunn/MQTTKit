@@ -69,17 +69,14 @@ final public class MQTTSession: NSObject, StreamDelegate {
     public func connect(completion: ((_ success: Bool) -> Void)? = nil) {
         closeStreams()
         openStreams { [weak self] streams in
-            print("Got to completion")
             guard let strongSelf = self, let streams = streams else {
                 completion?(false)
                 return
             }
-            print("Got past the completion guard")
 
             strongSelf.inputStream = streams.input
             strongSelf.outputStream = streams.output
 
-            print("About to call for MQTT negotiation")
             strongSelf.mqttConnect()
             strongSelf.startKeepAliveTimer()
 
@@ -187,11 +184,9 @@ final public class MQTTSession: NSObject, StreamDelegate {
         
 //      #if os(Linux)
       guard let url = URL(string: "tcp://\(host):\(options.port)") else { completion(nil); return }
-      print("Trying url: \(url.absoluteString)")
       Stream.CC_getStreamPair(to: url, timeout: 3.0) { result in
         switch result {
         case .success(let (input, output)):
-        print("got to success on getStreamPair")
         input.delegate = self
         output.delegate = self
         input.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
@@ -202,21 +197,17 @@ final public class MQTTSession: NSObject, StreamDelegate {
         }
         
         DispatchQueue.global(qos: .userInitiated).async {
-            print("Opening streams")
             input.open()
             output.open()
 
             while input.streamStatus == .opening || output.streamStatus == .opening {
                 usleep(1000)
             }
-          print("finished the opening wait:  \(input.streamStatus) \(String(describing: input.streamError)) \(output.streamStatus) \(String(describing: output.streamError)))")
 
             if input.streamStatus != .open || output.streamStatus != .open {
-                print("neither stream is open")
                 completion(nil)
                 return
             }
-            print("Calling Completion")
             completion((input, output))
         }
         
@@ -278,10 +269,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
     public func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
         switch eventCode {
         case .hasBytesAvailable:
-          if aStream === inputStream {
-            print("input stream hasBytesAvailable")
-          }
-          if let input = inputStream {//aStream as? InputStream {
+          if let input = aStream as? InputStream {
                 readStream(input: input)
             }
         case .errorOccurred:
@@ -305,7 +293,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
         mainReading: while input.streamStatus == .open && input.hasBytesAvailable {
             // Header
           print("stream is \(input.streamStatus) has bytes:  \(input.hasBytesAvailable)")
-            let count = input.read(messageBuffer, maxLength: 100)
+            let count = input.read(messageBuffer, maxLength: 1)
           print("In reading inputstream loop:  \(count) read, \(messageBuffer) \(messageBuffer.pointee)")
           for i in 0...100 {
             print("\(i):  \(String(format: "%02X", bufferPointer[i]))")
@@ -429,11 +417,10 @@ final public class MQTTSession: NSObject, StreamDelegate {
 
         lastServerResponse = Date()
 
-         print("\t\t<-", packet.type, packet.identifier ?? "")
+         //print("\t\t<-", packet.type, packet.identifier ?? "")
 
         switch packet.type {
         case .connack:
-          print("in handle packet connack \(String(describing: packet.connectionResponse))")
             if let res = packet.connectionResponse {
                 if res == .accepted {
                     state = .connected
@@ -544,7 +531,6 @@ final public class MQTTSession: NSObject, StreamDelegate {
         packet.variableHeader += connFlags
         packet.variableHeader += options.keepAliveInterval
       
-        print("Sending packet on connect: \(packet)")
         send(packet: packet)
     }
 
@@ -644,8 +630,6 @@ final public class MQTTSession: NSObject, StreamDelegate {
         }
 
         guard let output = outputStream else { return }
-
-        print("past the guard for output stream")
         // print(packet.type, packet.identifier ?? "", "->")
 
         let serialized = packet.encoded
@@ -654,13 +638,9 @@ final public class MQTTSession: NSObject, StreamDelegate {
         
         writeQueue.sync {
             while toSend > 0 {
-                print("in the toSend loop: \(toSend)")
                 
               let count = serialized.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) -> Int in
-             //   let newPtr: UnsafePointer<UInt8> = UnsafePointer<UInt8>(ptr.baseAddress!)
-                let count = output.write(ptr.bindMemory(to: UInt8.self).baseAddress!.advanced(by: sent), maxLength: toSend)
-                print("attempted the write and got count \(count)")
-                return count
+                output.write(ptr.bindMemory(to: UInt8.self).baseAddress!.advanced(by: sent), maxLength: toSend)
               }
               
                 if count < 0 {
