@@ -284,7 +284,6 @@ final public class MQTTSession: NSObject, StreamDelegate {
     private func readStream(input: InputStream) {
         var packet: MQTTPacket!
         let messageBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: options.bufferSize)
-        let bufferPointer = UnsafeMutableBufferPointer(start: messageBuffer, count: 101)
         defer {
             messageBuffer.deinitialize(count: options.bufferSize)
             messageBuffer.deallocate()
@@ -294,10 +293,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
             // Header
           print("stream is \(input.streamStatus) has bytes:  \(input.hasBytesAvailable)")
             let count = input.read(messageBuffer, maxLength: 1)
-          print("In reading inputstream loop:  \(count) read, \(messageBuffer) \(messageBuffer.pointee)")
-          for i in 0...100 {
-            print("\(i):  \(String(format: "%02X", bufferPointer[i]))")
-          }
+          print("In reading inputstream loop:  \(count)")
             if count == 0 {
                 continue
             } else if count < 0 {
