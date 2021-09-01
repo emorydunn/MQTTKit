@@ -423,10 +423,11 @@ final public class MQTTSession: NSObject, StreamDelegate {
 
         lastServerResponse = Date()
 
-        // print("\t\t<-", packet.type, packet.identifier ?? "")
+         print("\t\t<-", packet.type, packet.identifier ?? "")
 
         switch packet.type {
         case .connack:
+          print("in handle packet connack \(String(describing: packet.connectionResponse))")
             if let res = packet.connectionResponse {
                 if res == .accepted {
                     state = .connected
