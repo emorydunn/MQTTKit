@@ -649,10 +649,13 @@ final public class MQTTSession: NSObject, StreamDelegate {
             while toSend > 0 {
                 print("in the toSend loop: \(toSend)")
                 
-              let count = serialized.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) in
+              let count = serialized.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) -> Int in
              //   let newPtr: UnsafePointer<UInt8> = UnsafePointer<UInt8>(ptr.baseAddress!)
-                output.write(ptr.bindMemory(to: UInt8.self).baseAddress!.advanced(by: sent), maxLength: toSend)
+                let count = output.write(ptr.bindMemory(to: UInt8.self).baseAddress!.advanced(by: sent), maxLength: toSend)
+                print("attempted the write and got count \(count)")
+                return count
               }
+              
                 if count < 0 {
                     return
                 }
