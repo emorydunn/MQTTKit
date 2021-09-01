@@ -307,8 +307,8 @@ final public class MQTTSession: NSObject, StreamDelegate {
           print("stream is \(input.streamStatus) has bytes:  \(input.hasBytesAvailable)")
             let count = input.read(messageBuffer, maxLength: 1)
           print("In reading inputstream loop:  \(count) read, \(messageBuffer) \(messageBuffer.pointee)")
-          for i in 1...100 {
-            print("\(i):  \(String(format: "%02X", messageBuffer.pointee.advanced(by: 1)))")
+          for i in 0...100 {
+            print("\(i):  \(String(format: "%02X", messageBuffer.pointee.advanced(by: i)))")
           }
             if count == 0 {
                 continue
