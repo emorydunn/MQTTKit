@@ -648,9 +648,11 @@ final public class MQTTSession: NSObject, StreamDelegate {
         writeQueue.sync {
             while toSend > 0 {
                 print("in the toSend loop: \(toSend)")
-                let count = serialized.withUnsafeBytes {
-                    output.write($0.advanced(by: sent), maxLength: toSend)
-                }
+                
+              let count = serialized.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) in
+             //   let newPtr: UnsafePointer<UInt8> = UnsafePointer<UInt8>(ptr.baseAddress!)
+                output.write(ptr.bindMemory(to: UInt8.self).baseAddress!.advanced(by: sent), maxLength: toSend)
+              }
                 if count < 0 {
                     return
                 }
