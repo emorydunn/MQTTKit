@@ -188,11 +188,9 @@ final public class MQTTSession: NSObject, StreamDelegate {
 //      #if os(Linux)
       guard let url = URL(string: "tcp://\(host):\(options.port)") else { completion(nil); return }
       print("Trying url: \(url.absoluteString)")
-      Stream.CC_getStreamPair(to: url) { result in
+      Stream.CC_getStreamPair(to: url, timeout: 3.0) { result in
         switch result {
         case .success(let (input, output)):
-//        inputStream = input
-//        outputStream = output
         print("got to success on getStreamPair")
         input.delegate = self
         output.delegate = self
@@ -283,7 +281,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
           if aStream === inputStream {
             print("input stream hasBytesAvailable")
           }
-            if let input = aStream as? InputStream {
+          if let input = inputStream {//aStream as? InputStream {
                 readStream(input: input)
             }
         case .errorOccurred:
