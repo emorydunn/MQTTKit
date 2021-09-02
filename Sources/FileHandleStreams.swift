@@ -9,7 +9,7 @@ import Foundation
 
 class FileHandleInputStream: InputStream {
 
-    private let fileHandle: FileHandle
+    public private(set) var fileHandle: FileHandle
 
     private var _streamStatus: Stream.Status
     private var _streamError: Error?
