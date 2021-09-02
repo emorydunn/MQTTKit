@@ -184,9 +184,9 @@ final public class MQTTSession: NSObject, StreamDelegate {
         
 //      #if os(Linux)
 //      guard let url = URL(string: "tcp://\(host):\(options.port)") else { completion(nil); return }
-      let streams = Stream.CC_getStreamsToHost(with: host, port: options.port)
-      inputStream = streams.0
-      outputStream = streams.1
+        let streams = Stream.CC_getStreamsToHost(with: host, port: options.port)
+        inputStream = streams.0
+        outputStream = streams.1
       
       guard let input = inputStream, let output = outputStream else {
           completion(nil)
@@ -195,9 +195,9 @@ final public class MQTTSession: NSObject, StreamDelegate {
 //      Stream.CC_getStreamPair(to: url, timeout: 3.0) { result in
 //        switch result {
 //        case .success(let (input, output)):
-      input.delegate = self
+        input.delegate = self
         output.delegate = self
-      input.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
+        input.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
         output.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
         if self.options.useTLS {
             _ = input.setProperty(StreamSocketSecurityLevel.tlSv1.rawValue as AnyObject?, forKey: .socketSecurityLevelKey)
@@ -301,6 +301,8 @@ final public class MQTTSession: NSObject, StreamDelegate {
             // Header
           print("stream is \(input.streamStatus) has bytes:  \(input.hasBytesAvailable)")
             let count = input.read(messageBuffer, maxLength: 1)
+          
+          
           print("In reading inputstream loop:  \(count)")
             if count == 0 {
                 continue
