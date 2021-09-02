@@ -315,6 +315,8 @@ final public class MQTTSession: NSObject, StreamDelegate {
             messageBuffer.deinitialize(count: options.bufferSize)
             messageBuffer.deallocate()
         }
+      
+      var bytesRead: Int = 0
 
         mainReading: while input.streamStatus == .open && input.hasBytesAvailable {
             // Header
@@ -322,16 +324,21 @@ final public class MQTTSession: NSObject, StreamDelegate {
 //            guard let data = try? (input as? FileHandleInputStream)?.fileHandle.read(upToCount: 1) else { continue }
 //            let count = data.count
             let count = input.read(messageBuffer, maxLength: 1)
+            bytesRead += count
           
           
-          print("In reading inputstream loop:  \(count)")
-          print(messageBuffer.pointee)
+          print("In reading outer loop and read:  \(count) bytes, \(bytesRead) total")
+          let realBuffer = UnsafeMutableBufferPointer(start: messageBuffer, count:100)
+          print("Printing the buffer")
+          for i in 0..<100 {
+            print("\(i):  \(String(format: "%02X", realBuffer[i]))")
+          }
             if count == 0 {
                 continue
             } else if count < 0 {
                 break
             }
-//            messageBuffer[0] = data[0]
+
             if let _ = MQTTPacket.PacketType(rawValue: messageBuffer.pointee & MQTTPacket.Header.typeMask) {
                 packet = MQTTPacket(header: messageBuffer.pointee)
             } else {
@@ -342,9 +349,13 @@ final public class MQTTSession: NSObject, StreamDelegate {
             // Remaining Length
             var multiplier = 1
             var remainingLength = 0
-
+          
+            print("entering inner loop")
             repeat {
                 let count = input.read(messageBuffer, maxLength: 1)
+                bytesRead += count
+                print("In reading outer loop and read:  \(count) bytes, \(bytesRead) total")
+                print("\(String(format: "%02X", messageBuffer.pointee))")
                 if count == 0 {
                     continue mainReading
                 } else if count < 0 {
@@ -436,7 +447,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
                 let data = Data(bytes: messageBuffer, count: count)
                 packet.payload.append(data)
             }
-
+            print("Handling the packet")
             handlePacket(packet)
         }
     }
