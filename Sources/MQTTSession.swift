@@ -319,18 +319,19 @@ final public class MQTTSession: NSObject, StreamDelegate {
         mainReading: while input.streamStatus == .open && input.hasBytesAvailable {
             // Header
 //          print("stream is \(input.streamStatus) has bytes:  \(input.hasBytesAvailable)")
-            guard let data = try? (input as? FileHandleInputStream)?.fileHandle.read(upToCount: 1) else { continue }
-            let count = data.count
-//            let count = input.read(messageBuffer, maxLength: 1)
+//            guard let data = try? (input as? FileHandleInputStream)?.fileHandle.read(upToCount: 1) else { continue }
+//            let count = data.count
+            let count = input.read(messageBuffer, maxLength: 1)
           
           
-//          print("In reading inputstream loop:  \(count)")
+          print("In reading inputstream loop:  \(count)")
+          print(messageBuffer)
             if count == 0 {
                 continue
             } else if count < 0 {
                 break
             }
-            messageBuffer[0] = data[0]
+//            messageBuffer[0] = data[0]
             if let _ = MQTTPacket.PacketType(rawValue: messageBuffer.pointee & MQTTPacket.Header.typeMask) {
                 packet = MQTTPacket(header: messageBuffer.pointee)
             } else {
