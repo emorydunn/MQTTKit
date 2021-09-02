@@ -296,7 +296,9 @@ final public class MQTTSession: NSObject, StreamDelegate {
     public func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
         switch eventCode {
         case .hasBytesAvailable:
+          print("stream delegate has bytes availabe")
           if let input = aStream as? InputStream {
+            print("aStream is an input stream, commence reading the packet")
                 readStream(input: input)
             }
         case .errorOccurred:
@@ -317,7 +319,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
         }
       
       var timsbytesRead: Int = 0
-
+      print("entering outer loop")
         mainReading: while input.streamStatus == .open && input.hasBytesAvailable {
             // Header
 //          print("stream is \(input.streamStatus) has bytes:  \(input.hasBytesAvailable)")
