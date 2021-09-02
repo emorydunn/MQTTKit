@@ -191,7 +191,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
 //      guard let url = URL(string: "tcp://\(host):\(options.port)") else { completion(nil); return }
         print("About to get the streams")
       #if canImport(FoundationNetworking)
-        let fileDescriptor = csocket_connect(host.cString(using: .utf8), Int32(port), 1000)
+        let fileDescriptor = csocket_connect(host.cString(using: .utf8), Int32(options.port), 1000)
         print("In CC_getStreamsToHost and got file descriptor of \(fileDescriptor) from FoundationNetworking")
         if fileDescriptor >= 0 {
             let fih = FileHandle(fileDescriptor: fileDescriptor, closeOnDealloc: true)
