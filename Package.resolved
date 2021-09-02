@@ -5,9 +5,9 @@
         "package": "CornucopiaStreams",
         "repositoryURL": "https://github.com/leisurehound/CornucopiaStreams.git",
         "state": {
-          "branch": null,
-          "revision": "b2b987c8e14cb268d6db9477876d23d67de854f0",
-          "version": "0.9.1"
+          "branch": "master",
+          "revision": "b9352094776aedaf50d25c61d90fc169ac738e37",
+          "version": null
         }
       }
     ]
