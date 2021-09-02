@@ -184,7 +184,9 @@ final public class MQTTSession: NSObject, StreamDelegate {
         
 //      #if os(Linux)
 //      guard let url = URL(string: "tcp://\(host):\(options.port)") else { completion(nil); return }
+        print("About to get the streams")
         let streams = Stream.CC_getStreamsToHost(with: host, port: options.port)
+        print("got streams \(streams)")
         inputStream = streams.0
         outputStream = streams.1
       
@@ -299,11 +301,11 @@ final public class MQTTSession: NSObject, StreamDelegate {
 
         mainReading: while input.streamStatus == .open && input.hasBytesAvailable {
             // Header
-          print("stream is \(input.streamStatus) has bytes:  \(input.hasBytesAvailable)")
+//          print("stream is \(input.streamStatus) has bytes:  \(input.hasBytesAvailable)")
             let count = input.read(messageBuffer, maxLength: 1)
           
           
-          print("In reading inputstream loop:  \(count)")
+//          print("In reading inputstream loop:  \(count)")
             if count == 0 {
                 continue
             } else if count < 0 {
