@@ -20,7 +20,7 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-      .package(url: "https://github.com/leisurehound/CornucopiaStreams.git", .branch("master"))
+//      .package(url: "https://github.com/leisurehound/CornucopiaStreams.git", .branch("master"))
      // .package(url: "https://github.com/Cornucopia-Swift/CornucopiaStreams.git", from: "0.9.0")
         
     ],
@@ -29,10 +29,15 @@ let package = Package(
         // A target can define a module or a test suite.
         // Targets can depend on other targets in this package,
         // and on products in packages which this package depends on.
+        .target(name: "CSocketHelper"),
         .target(
             name: "MQTTKit",
-            dependencies: ["CornucopiaStreams"],
-            path: "Sources"
+            dependencies: [
+//              "CornucopiaStreams",
+              "CSocketHelper"
+            ],
+            path: "Sources",
+            exclude: ["CSocketHelper"]
             ),
         .testTarget(
             name: "MQTTKitTests",

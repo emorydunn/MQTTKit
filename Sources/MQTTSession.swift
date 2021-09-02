@@ -8,6 +8,11 @@
 
 import Foundation
 import CornucopiaStreams
+import CSocketHelper
+
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 final public class MQTTSession: NSObject, StreamDelegate {
     private var options: MQTTOptions
@@ -185,10 +190,22 @@ final public class MQTTSession: NSObject, StreamDelegate {
 //      #if os(Linux)
 //      guard let url = URL(string: "tcp://\(host):\(options.port)") else { completion(nil); return }
         print("About to get the streams")
-        let streams = Stream.CC_getStreamsToHost(with: host, port: options.port)
-        print("got streams \(streams)")
-        inputStream = streams.0
-        outputStream = streams.1
+      #if canImport(FoundationNetworking)
+        let fileDescriptor = csocket_connect(host.cString(using: .utf8), Int32(port), 1000)
+        print("In CC_getStreamsToHost and got file descriptor of \(fileDescriptor) from FoundationNetworking")
+        if fileDescriptor >= 0 {
+            let fih = FileHandle(fileDescriptor: fileDescriptor, closeOnDealloc: true)
+            let foh = FileHandle(fileDescriptor: fileDescriptor, closeOnDealloc: false)
+            inputStream = FileHandleInputStream(fileHandle: fih)
+            outputStream = FileHandleOutputStream(fileHandle: foh)
+        }
+      #else
+        Stream.getStreamsToHost(
+          withName: options.host,
+          port: options.port,
+          inputStream: &inputStream,
+          outputStream: &outputStream)
+      #endif
       
       guard let input = inputStream, let output = outputStream else {
           completion(nil)
