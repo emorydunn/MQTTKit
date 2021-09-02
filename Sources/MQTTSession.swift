@@ -316,7 +316,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
             messageBuffer.deallocate()
         }
       
-      var bytesRead: Int = 0
+      var timsbytesRead: Int = 0
 
         mainReading: while input.streamStatus == .open && input.hasBytesAvailable {
             // Header
@@ -324,13 +324,13 @@ final public class MQTTSession: NSObject, StreamDelegate {
 //            guard let data = try? (input as? FileHandleInputStream)?.fileHandle.read(upToCount: 1) else { continue }
 //            let count = data.count
             let count = input.read(messageBuffer, maxLength: 1)
-            bytesRead += count
+            timsbytesRead += count
           
           
-          print("In reading outer loop and read:  \(count) bytes, \(bytesRead) total")
+          print("In reading outer loop and read:  \(count) bytes, \(timsbytesRead) total")
           let realBuffer = UnsafeMutableBufferPointer(start: messageBuffer, count:100)
           print("Printing the buffer")
-          for i in 0..<bytesRead {
+          for i in 0..<timsbytesRead {
             print("\(i):  \(String(format: "%02X", realBuffer[i]))")
           }
             if count == 0 {
@@ -350,11 +350,11 @@ final public class MQTTSession: NSObject, StreamDelegate {
             var multiplier = 1
             var remainingLength = 0
           
-            print("entering inner loop")
+            print("entering inner loop")  // I think this is computing the size of the payload
             repeat {
                 let count = input.read(messageBuffer, maxLength: 1)
-                bytesRead += count
-                print("In reading outer loop and read:  \(count) bytes, \(bytesRead) total")
+                timsbytesRead += count
+                print("In reading outer loop and read:  \(count) bytes, \(timsbytesRead) total")
                 print("\(String(format: "%02X", messageBuffer.pointee))")
                 if count == 0 {
                     continue mainReading
@@ -376,6 +376,8 @@ final public class MQTTSession: NSObject, StreamDelegate {
             if packet.type == .connack {
                 // Connack response code
                 let count = input.read(messageBuffer, maxLength: 2)
+                timsbytesRead += count
+                print("In connack and read:  \(count) bytes, \(timsbytesRead) total")
                 if count == 0 {
                     continue
                 } else if count < 0 {
@@ -388,6 +390,8 @@ final public class MQTTSession: NSObject, StreamDelegate {
             if packet.type == .publish {
                 // Topic length
                 var count = input.read(messageBuffer, maxLength: 2)
+              timsbytesRead += count
+              print("In publish and read:  \(count) bytes, \(timsbytesRead) total")
                 if count == 0 {
                     continue
                 } else if count < 0 {
