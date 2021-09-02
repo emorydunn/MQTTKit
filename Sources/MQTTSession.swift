@@ -179,17 +179,25 @@ final public class MQTTSession: NSObject, StreamDelegate {
     private func openStreams(completion: @escaping (((input: InputStream, output: OutputStream)?) -> Void)) {
 
         guard let host = options.host else { completion(nil); return }
-//        var inputStream: InputStream?
-//        var outputStream: OutputStream?
+        var inputStream: InputStream?
+        var outputStream: OutputStream?
         
 //      #if os(Linux)
-      guard let url = URL(string: "tcp://\(host):\(options.port)") else { completion(nil); return }
-      Stream.CC_getStreamPair(to: url, timeout: 3.0) { result in
-        switch result {
-        case .success(let (input, output)):
-        input.delegate = self
+//      guard let url = URL(string: "tcp://\(host):\(options.port)") else { completion(nil); return }
+      let streams = Stream.CC_getStreamsToHost(with: host, port: options.port)
+      inputStream = streams.0
+      outputStream = streams.1
+      
+      guard let input = inputStream, let output = outputStream else {
+          completion(nil)
+          return
+      }
+//      Stream.CC_getStreamPair(to: url, timeout: 3.0) { result in
+//        switch result {
+//        case .success(let (input, output)):
+      input.delegate = self
         output.delegate = self
-        input.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
+      input.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
         output.schedule(in: RunLoop.main, forMode: RunLoop.Mode.default)
         if self.options.useTLS {
             _ = input.setProperty(StreamSocketSecurityLevel.tlSv1.rawValue as AnyObject?, forKey: .socketSecurityLevelKey)
@@ -211,10 +219,10 @@ final public class MQTTSession: NSObject, StreamDelegate {
             completion((input, output))
         }
         
-        case .failure(let a):
-          print ("GetStreamPair fails:  \(a)")
-        }
-      }
+//        case .failure(let a):
+//          print ("GetStreamPair fails:  \(a)")
+//        }
+//      }
 //      #else
 //        Stream.getStreamsToHost(
 //          withName: options.host,
