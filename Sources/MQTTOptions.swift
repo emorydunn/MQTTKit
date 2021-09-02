@@ -20,16 +20,16 @@ public struct MQTTOptions {
         }
     }
     public var cleanSession = true
-    var will: MQTTMessage?
+    public var will: MQTTMessage?
     public var password: String? = nil
     public var username: String? = nil
-    var keepAliveInterval: UInt16 = 10
-    var clientId: String = UUID().uuidString
+    public var keepAliveInterval: UInt16 = 10
+    public var clientId: String = UUID().uuidString
     public var useTLS = false
-    var autoReconnect: Bool = true
-    var autoReconnectTimeout: Double = 60
-    var bufferSize: Int = 4096
-    var readQosClass: DispatchQoS.QoSClass = .background
+    public var autoReconnect: Bool = true
+    public var autoReconnectTimeout: Double = 60
+    public var bufferSize: Int = 4096
+    public var readQosClass: DispatchQoS.QoSClass = .background
     
     public init(host: String, port: Int? = nil) {
         self.host = host
