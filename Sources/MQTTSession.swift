@@ -330,7 +330,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
           print("In reading outer loop and read:  \(count) bytes, \(bytesRead) total")
           let realBuffer = UnsafeMutableBufferPointer(start: messageBuffer, count:100)
           print("Printing the buffer")
-          for i in 0..<100 {
+          for i in 0..<bytesRead {
             print("\(i):  \(String(format: "%02X", realBuffer[i]))")
           }
             if count == 0 {
