@@ -325,7 +325,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
           
           
           print("In reading inputstream loop:  \(count)")
-          print(messageBuffer)
+          print(messageBuffer.pointee)
             if count == 0 {
                 continue
             } else if count < 0 {
