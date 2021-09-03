@@ -313,17 +313,17 @@ final public class MQTTSession: NSObject, StreamDelegate {
       print("Do the full read")
       var timsbytesRead: Int = 0
       
-      let count = input.read(messageBuffer, maxLength: options.bufferSize)
-      timsbytesRead += count
+//      let count = input.read(messageBuffer, maxLength: options.bufferSize)
+//      timsbytesRead += count
     
 
     
-    print("In reading outer loop and read:  \(count) bytes, \(timsbytesRead) total")
-    let realBuffer = UnsafeMutableBufferPointer(start: messageBuffer, count:100)
-    print("Printing the buffer")
-    for i in 0..<timsbytesRead {
-      print("\(i):  \(String(format: "%02X", realBuffer[i]))")
-    }
+//    print("In reading outer loop and read:  \(count) bytes, \(timsbytesRead) total")
+//    let realBuffer = UnsafeMutableBufferPointer(start: messageBuffer, count:100)
+//    print("Printing the buffer")
+//    for i in 0..<timsbytesRead {
+//      print("\(i):  \(String(format: "%02X", realBuffer[i]))")
+//    }
       
 
       print("entering outer loop")
