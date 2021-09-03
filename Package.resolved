@@ -3,10 +3,10 @@
     "pins": [
       {
         "package": "CornucopiaStreams",
-        "repositoryURL": "https://github.com/Cornucopia-Swift/CornucopiaStreams.git",
+        "repositoryURL": "https://github.com/leisurehound/CornucopiaStreams.git",
         "state": {
           "branch": "issue/1/hasBytesAvailable",
-          "revision": "bb9b2ce8614bfdeff77d5bbbef891fab2551b855",
+          "revision": "a782e628fbe78e0b75f56abf655a74080cde6678",
           "version": null
         }
       }
