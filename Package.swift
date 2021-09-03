@@ -29,15 +29,12 @@ let package = Package(
         // A target can define a module or a test suite.
         // Targets can depend on other targets in this package,
         // and on products in packages which this package depends on.
-//        .target(name: "CSocketHelper"),
         .target(
             name: "MQTTKit",
             dependencies: [
               "CornucopiaStreams",
-//              "CSocketHelper"
             ],
-            path: "Sources",
-            exclude: ["CSocketHelper"]
+            path: "Sources"
             ),
         .testTarget(
             name: "MQTTKitTests",
