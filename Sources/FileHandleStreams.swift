@@ -57,12 +57,13 @@ class FileHandleInputStream: InputStream {
         #endif
     }
 
-    //override var hasBytesAvailable: Bool { true }
+    override var hasBytesAvailable: Bool { true }
 
     override func read(_ buffer: UnsafeMutablePointer<UInt8>, maxLength len: Int) -> Int {
         guard _streamStatus == .open else { return 0 }
         guard let data = try? self.fileHandle.read(upToCount: 1) else {
             #if os(Linux)
+            print("read end encountered")
             self._delegate?.stream(self, handle: .endEncountered)
             #else
             self._delegate?.stream?(self, handle: .endEncountered)
@@ -70,6 +71,7 @@ class FileHandleInputStream: InputStream {
             return 0
         }
         if data.count > 0 {
+            print("Moving from data to buffer with \(data.count) bytes")
             buffer[0] = data[0]
             self.fileHandle.waitForDataInBackgroundAndNotify()
         }
