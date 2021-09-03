@@ -308,6 +308,10 @@ final public class MQTTSession: NSObject, StreamDelegate {
             break
         }
     }
+  
+  private func processHeader(messageBuffer: UnsafeMutablePointer<UInt8>, length: Int) {
+    
+  }
 
     // MARK: - Stream reading
     private func readStream(input: InputStream) {
@@ -325,7 +329,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
 //          print("stream is \(input.streamStatus) has bytes:  \(input.hasBytesAvailable)")
 //            guard let data = try? (input as? FileHandleInputStream)?.fileHandle.read(upToCount: 1) else { continue }
 //            let count = data.count
-            let count = input.read(messageBuffer, maxLength: 1)
+            let count = input.read(messageBuffer, maxLength: options.bufferSize)
             timsbytesRead += count
           
           
