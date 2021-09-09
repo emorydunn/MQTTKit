@@ -7,11 +7,12 @@
 //
 
 import Foundation
-import CornucopiaStreams
+//import CornucopiaStreams
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
-
+import WebSocketKit
+  
 final public class MQTTSession: NSObject, StreamDelegate {
     private var options: MQTTOptions
     private var inputStream: InputStream?
@@ -185,13 +186,15 @@ final public class MQTTSession: NSObject, StreamDelegate {
         var inputStream: InputStream?
         var outputStream: OutputStream?
         
+      let websocket = WebSocketClient(eventLoopGroupProvider: .createNew)
+        
 //      #if os(Linux)
 //      guard let url = URL(string: "tcp://\(host):\(options.port)") else { completion(nil); return }
         print("About to get the streams")
       
-        let streams = Stream.CC_getStreamsToHost(with: host, port: options.port)
-        inputStream = streams.0
-        outputStream = streams.1
+//        let streams = Stream.CC_getStreamsToHost(with: host, port: options.port)
+//        inputStream = streams.0
+//        outputStream = streams.1
 
 //        Stream.getStreamsToHost(
 //          withName: options.host,
