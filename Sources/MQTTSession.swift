@@ -178,6 +178,8 @@ final public class MQTTSession: NSObject, StreamDelegate {
           }
         }
     }
+  
+  var websocket: WebSocketClient?
 
     // MARK: - Socket connection
     private func openStreams(completion: @escaping (((input: InputStream, output: OutputStream)?) -> Void)) {
