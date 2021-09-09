@@ -186,7 +186,7 @@ final public class MQTTSession: NSObject, StreamDelegate {
         var inputStream: InputStream?
         var outputStream: OutputStream?
         
-      let websocket = WebSocketClient(eventLoopGroupProvider: .createNew)
+        let websocket = WebSocketClient(eventLoopGroupProvider: .createNew)
         
 //      #if os(Linux)
 //      guard let url = URL(string: "tcp://\(host):\(options.port)") else { completion(nil); return }
@@ -207,10 +207,6 @@ final public class MQTTSession: NSObject, StreamDelegate {
           return
       }
       
-      let session = URLSession(configuration: .default)
-      let url = URL(string: "wss://029a34ae9dc449f89afd6e9deee13530.s1.eu.hivemq.cloud:8884")!
-      let socket = session.webSocketTask(with: url)
-      socket.resume()
 //      Stream.CC_getStreamPair(to: url, timeout: 3.0) { result in
 //        switch result {
 //        case .success(let (input, output)):
