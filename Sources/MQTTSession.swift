@@ -190,11 +190,19 @@ final public class MQTTSession: NSObject, StreamDelegate {
 //        var inputStream: InputStream?
 //        var outputStream: OutputStream?
       
-      let promise = eventLoopGroup.next().makePromise(of: String.self)
-      WebSocket.connect(to: "wss://\(host):\(options.port)", on: eventLoopGroup) { ws in
-        print("socket was upgraded \(ws)")
+//      //https://medium.com/flawless-app-stories/different-flavors-of-websockets-on-vapor-with-swift-54ce00cc60b4
+//      let promise = eventLoopGroup.next().makePromise(of: String.self)
+//      WebSocket.connect(to: "wss://\(host):\(options.port)", on: eventLoopGroup) { ws in
+//        print("socket was upgraded \(ws)")
+//
+//      }.cascadeFailure(to: promise)
+      
+      let promise = WebSocket.connect(to: "wss://\(host):\(options.port)", on: eventLoopGroup) { websocket in
+        print("websocket upgraded \(websocket)")
         
-      }.cascadeFailure(to: promise)
+      }
+      
+      try? promise.wait()
       
         
 //        websocket = WebSocketClient(eventLoopGroupProvider: .createNew)
