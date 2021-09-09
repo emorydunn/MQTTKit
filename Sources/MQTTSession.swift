@@ -200,6 +200,11 @@ final public class MQTTSession: NSObject, StreamDelegate {
           completion(nil)
           return
       }
+      
+      let session = URLSession(configuration: .default)
+      let url = URL(string: "wss://029a34ae9dc449f89afd6e9deee13530.s1.eu.hivemq.cloud:8884")!
+      let socket = session.webSocketTask(with: url)
+      socket.resume()
 //      Stream.CC_getStreamPair(to: url, timeout: 3.0) { result in
 //        switch result {
 //        case .success(let (input, output)):
