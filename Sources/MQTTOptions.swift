@@ -33,5 +33,7 @@ public struct MQTTOptions {
     
     public init(host: String, port: Int? = nil) {
         self.host = host
+        guard let port = port else { return }
+        self.port = port
     }
 }
