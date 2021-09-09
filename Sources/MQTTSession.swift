@@ -11,6 +11,7 @@ import Foundation
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+import NIO
 import WebSocketKit
   
 final public class MQTTSession: NSObject, StreamDelegate {
@@ -180,23 +181,31 @@ final public class MQTTSession: NSObject, StreamDelegate {
     }
   
   var websocket: WebSocketClient?
+  var eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 2)
 
     // MARK: - Socket connection
     private func openStreams(completion: @escaping (((input: InputStream, output: OutputStream)?) -> Void)) {
 
         guard let host = options.host else { completion(nil); return }
-        var inputStream: InputStream?
-        var outputStream: OutputStream?
+//        var inputStream: InputStream?
+//        var outputStream: OutputStream?
+      
+      let promise = eventLoopGroup.next().makePromise(of: String.self)
+      WebSocket.connect(to: "wss://\(host):\(options.port)", on: eventLoopGroup) { ws in
+        print("socket was upgraded \(ws)")
         
-        websocket = WebSocketClient(eventLoopGroupProvider: .createNew)
-      let promise = websocket?.connect(scheme: "wss", host: host, port: options.port) { socket in
-        print("websocket connect completion:  \(socket)")
-      }
-      do {
-        try promise?.wait()
-      } catch {
-        print("caught error on promise wait")
-      }
+      }.cascadeFailure(to: promise)
+      
+        
+//        websocket = WebSocketClient(eventLoopGroupProvider: .createNew)
+//      let promise = websocket?.connect(scheme: "wss", host: host, port: options.port) { socket in
+//        print("websocket connect completion:  \(socket)")
+//      }
+//      do {
+//        try promise?.wait()
+//      } catch {
+//        print("caught error on promise wait")
+//      }
         
 //      #if os(Linux)
 //      guard let url = URL(string: "tcp://\(host):\(options.port)") else { completion(nil); return }
