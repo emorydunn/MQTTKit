@@ -189,8 +189,13 @@ final public class MQTTSession: NSObject, StreamDelegate {
         var outputStream: OutputStream?
         
         websocket = WebSocketClient(eventLoopGroupProvider: .createNew)
-      _ = websocket?.connect(scheme: "wss", host: host, port: options.port) { socket in
+      let promise = websocket?.connect(scheme: "wss", host: host, port: options.port) { socket in
         print("websocket connect completion:  \(socket)")
+      }
+      do {
+        try promise?.wait()
+      } catch {
+        print("caught error on promise wait")
       }
         
 //      #if os(Linux)
