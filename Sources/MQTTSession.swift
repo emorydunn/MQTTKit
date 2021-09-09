@@ -187,6 +187,9 @@ final public class MQTTSession: NSObject, StreamDelegate {
         var outputStream: OutputStream?
         
         let websocket = WebSocketClient(eventLoopGroupProvider: .createNew)
+      _ = websocket.connect(scheme: "wss", host: host, port: options.port) { socket in
+        print("websocket connect completion:  \(socket)")
+      }
         
 //      #if os(Linux)
 //      guard let url = URL(string: "tcp://\(host):\(options.port)") else { completion(nil); return }
