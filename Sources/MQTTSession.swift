@@ -8,6 +8,9 @@
 
 import Foundation
 import CornucopiaStreams
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 
 final public class MQTTSession: NSObject, StreamDelegate {
     private var options: MQTTOptions
