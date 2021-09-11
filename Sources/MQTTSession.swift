@@ -197,12 +197,12 @@ final public class MQTTSession: NSObject, StreamDelegate {
 //
 //      }.cascadeFailure(to: promise)
       
-      WebSocket.connect(to: "wss://\(host):\(options.port)", on: eventLoopGroup) { websocket in
-        print("websocket upgraded \(websocket)")
-        
-      }.whenFailure() { error in
-        print(error.localizedDescription)
-      }
+//      WebSocket.connect(to: "wss://\(host):\(options.port)", on: eventLoopGroup) { websocket in
+//        print("websocket upgraded \(websocket)")
+//        
+//      }.whenFailure() { error in
+//        print(error.localizedDescription)
+//      }
       
 
       
